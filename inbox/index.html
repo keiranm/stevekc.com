@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>inbox</title>
+<style>
+  :root{
+    --bg:#12151a;
+    --panel:#1a1f27;
+    --panel-edge:#252c37;
+    --text:#e7e9ec;
+    --text-dim:#8b93a1;
+    --amber:#FE5800;
+    --green:#4fb87a;
+    --red:#e2685f;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 50% -10%, #1e2530 0%, transparent 45%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    padding:24px;
+  }
+  .wrap{ width:100%; max-width:960px; margin:0 auto; }
+  .hidden{ display:none !important; }
+
+  .crumb{
+    display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;
+    font-family:var(--mono); margin:0 0 24px;
+  }
+  .crumb a{ color:var(--text-dim); text-decoration:none; font-size:13px; }
+  .crumb a:hover{ color:var(--amber); }
+  .crumb .sep{ color:var(--text-dim); font-size:13px; }
+  .crumb .current{ color:var(--text); font-size:22px; font-weight:600; }
+  .crumb .spacer{ flex:1; }
+
+  /* login */
+  #login{ max-width:360px; margin:12vh auto 0; }
+  label{ display:block; font-family:var(--mono); font-size:12px; color:var(--text-dim); margin:0 0 6px; }
+  input[type=text], input[type=email], input[type=password]{
+    width:100%; background:var(--panel); border:1px solid var(--panel-edge);
+    border-radius:10px; color:var(--text); font-family:var(--sans);
+    font-size:14.5px; padding:12px 14px; margin-bottom:16px;
+  }
+  input:focus{ outline:none; border-color:var(--amber); }
+  button{ font-family:var(--mono); cursor:pointer; }
+  .primary{
+    width:100%; background:var(--amber); color:#1a0e06; border:none;
+    border-radius:10px; font-weight:600; font-size:13px; padding:13px;
+  }
+  .primary:disabled{ opacity:.5; cursor:default; }
+  .msg{ font-family:var(--mono); font-size:12.5px; color:var(--text-dim); margin:14px 0; min-height:1em; }
+  .msg.err{ color:var(--red); }
+
+  /* toolbar */
+  .bar{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .tab, .chip, .ghost{
+    background:var(--panel); border:1px solid var(--panel-edge); color:var(--text-dim);
+    border-radius:8px; font-size:12px; padding:7px 12px;
+  }
+  .tab:hover, .chip:hover, .ghost:hover{ color:var(--text); border-color:var(--text-dim); }
+  .tab.on, .chip.on{ color:var(--amber); border-color:var(--amber); }
+  .bar .spacer{ flex:1; }
+  .tags-row{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; }
+  .chip{ padding:4px 10px; font-size:11.5px; border-radius:999px; }
+
+  /* grid */
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:14px; }
+  .card{
+    background:var(--panel); border:1px solid var(--panel-edge);
+    border-radius:12px; overflow:hidden; display:flex; flex-direction:column;
+  }
+  .thumb{
+    aspect-ratio:4/3; background:#0e1116; display:flex; align-items:center;
+    justify-content:center; cursor:pointer; overflow:hidden;
+  }
+  .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .thumb .ext{
+    font-family:var(--mono); font-size:22px; font-weight:600; color:var(--text-dim);
+    border:1.5px solid var(--panel-edge); border-radius:10px; padding:12px 16px;
+    text-transform:lowercase;
+  }
+  .thumb:hover .ext{ color:var(--amber); border-color:var(--amber); }
+  .info{ padding:10px 12px 12px; display:flex; flex-direction:column; gap:6px; }
+  .name{ font-family:var(--mono); font-size:12.5px; word-break:break-all; }
+  .meta{ font-family:var(--mono); font-size:11px; color:var(--text-dim); }
+  .note{ font-size:12.5px; color:var(--text); border-left:2px solid var(--amber); padding-left:8px; word-break:break-word; }
+  .card .tags{ display:flex; gap:5px; flex-wrap:wrap; }
+  .card .tag{
+    font-family:var(--mono); font-size:11px; color:var(--text-dim);
+    background:#0e1116; border-radius:999px; padding:2px 8px;
+  }
+  .tag-edit{ margin:0 !important; padding:8px 10px !important; font-size:12.5px !important; }
+  .actions{ display:flex; gap:6px; margin-top:4px; flex-wrap:wrap; }
+  .act{
+    background:transparent; border:1px solid var(--panel-edge); color:var(--text-dim);
+    border-radius:7px; font-size:11.5px; padding:5px 10px;
+  }
+  .act:hover{ color:var(--text); border-color:var(--text-dim); }
+  .act.keep:hover{ color:var(--green); border-color:var(--green); }
+  .act.del:hover, .act.del.arm{ color:var(--red); border-color:var(--red); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="crumb">
+    <a href="https://stevekc.com/">stevekc.com</a>
+    <span class="sep">›</span>
+    <span class="current">inbox</span>
+    <span class="spacer"></span>
+    <button class="ghost hidden" id="signout" type="button">sign out</button>
+  </div>
+
+  <!-- login -->
+  <form id="login" autocomplete="on">
+    <label for="email">email</label>
+    <input type="email" id="email" name="username" autocomplete="username" required>
+    <label for="password">password</label>
+    <input type="password" id="password" name="password" autocomplete="current-password" required>
+    <button class="primary" id="loginBtn" type="submit">log in</button>
+    <div class="msg" id="loginMsg"></div>
+  </form>
+
+  <!-- inbox -->
+  <div id="app" class="hidden">
+    <div class="bar">
+      <button class="tab on" id="tabPending" type="button">pending</button>
+      <button class="tab" id="tabKept" type="button">kept</button>
+      <span class="spacer"></span>
+      <button class="ghost" id="reload" type="button">↻ refresh</button>
+    </div>
+    <div class="tags-row" id="tagsRow"></div>
+    <div class="msg" id="status"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+</div>
+
+<script>
+const API_BASE   = "https://sf06p1myta.execute-api.ap-southeast-2.amazonaws.com";
+const COGNITO_URL = "https://cognito-idp.ap-southeast-2.amazonaws.com/";
+const CLIENT_ID  = "1tf7av845gfsdsnnfmqmuutq06";
+
+// Tokens live in sessionStorage only: closing the tab logs you out.
+const store = {
+  get(k){ try { return sessionStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { sessionStorage.setItem(k,v); } catch(e){} },
+  clear(){ try { sessionStorage.clear(); } catch(e){} }
+};
+
+const $ = id => document.getElementById(id);
+
+// Build DOM with textContent only. Notes and filenames come from whoever
+// uploaded the file, so they must never be injected as HTML.
+function el(tag, props = {}, ...kids){
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)){
+    if (k === 'class') n.className = v;
+    else if (k === 'text') n.textContent = v;
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v);
+  }
+  kids.filter(Boolean).forEach(c => n.append(c));
+  return n;
+}
+
+/* ---------- auth ---------- */
+
+async function cognito(target, body){
+  const res = await fetch(COGNITO_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-amz-json-1.1',
+      'X-Amz-Target': 'AWSCognitoIdentityProviderService.' + target
+    },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok){
+    const err = new Error(data.message || 'auth failed');
+    err.code = (data.__type || '').split('#').pop();
+    throw err;
+  }
+  return data;
+}
+
+async function login(email, password){
+  const data = await cognito('InitiateAuth', {
+    AuthFlow: 'USER_PASSWORD_AUTH',
+    ClientId: CLIENT_ID,
+    AuthParameters: { USERNAME: email, PASSWORD: password }
+  });
+  const r = data.AuthenticationResult;
+  if (!r) throw new Error('unexpected sign-in step');
+  store.set('idToken', r.IdToken);
+  store.set('refreshToken', r.RefreshToken);
+}
+
+async function refresh(){
+  const rt = store.get('refreshToken');
+  if (!rt) return false;
+  try {
+    const data = await cognito('InitiateAuth', {
+      AuthFlow: 'REFRESH_TOKEN_AUTH',
+      ClientId: CLIENT_ID,
+      AuthParameters: { REFRESH_TOKEN: rt }
+    });
+    store.set('idToken', data.AuthenticationResult.IdToken);
+    return true;
+  } catch(e){
+    return false;
+  }
+}
+
+function signOut(message){
+  store.clear();
+  items = [];
+  $('grid').replaceChildren();
+  $('tagsRow').replaceChildren();
+  $('app').classList.add('hidden');
+  $('signout').classList.add('hidden');
+  $('login').classList.remove('hidden');
+  $('password').value = '';
+  setLoginMsg(message || '', !!message);
+}
+
+async function api(path, opts = {}, retried = false){
+  const res = await fetch(API_BASE + path, {
+    ...opts,
+    headers: { ...(opts.headers || {}), 'Authorization': 'Bearer ' + store.get('idToken') }
+  });
+  if (res.status === 401 && !retried && await refresh()) return api(path, opts, true);
+  if (res.status === 401){ signOut('session expired — log in again'); throw new Error('unauthorised'); }
+  if (res.status === 403){ signOut('this account cannot open the inbox'); throw new Error('forbidden'); }
+  return res;
+}
+
+/* ---------- state ---------- */
+
+let items = [];
+let status = 'pending';
+let activeTag = '';
+let loadedAt = 0;
+
+function setLoginMsg(text, isErr){
+  $('loginMsg').textContent = text;
+  $('loginMsg').className = 'msg' + (isErr ? ' err' : '');
+}
+function setStatus(text, isErr){
+  $('status').textContent = text;
+  $('status').className = 'msg' + (isErr ? ' err' : '');
+}
+
+function humanSize(bytes){
+  if (bytes < 1024) return bytes + ' b';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(0) + ' kb';
+  if (bytes < 1024*1024*1024) return (bytes/(1024*1024)).toFixed(1) + ' mb';
+  return (bytes/(1024*1024*1024)).toFixed(2) + ' gb';
+}
+function displayName(item){ return (item.filename || '').replace(/^\d+-/, ''); }
+function extOf(item){
+  const m = displayName(item).match(/\.([A-Za-z0-9]{1,5})$/);
+  return m ? m[1] : 'file';
+}
+
+/* ---------- loading and rendering ---------- */
+
+async function load(){
+  setStatus('loading…');
+  try {
+    const res = await api('/inbox/items?status=' + status);
+    if (!res.ok){ setStatus('could not load items', true); return; }
+    items = (await res.json()).items;
+    loadedAt = Date.now();
+    render();
+  } catch(e){
+    // api() has already signed out on 401/403
+    if (!$('app').classList.contains('hidden')) setStatus('could not load items', true);
+  }
+}
+
+function render(){
+  // tag chips, built from whatever is in the current tab
+  const allTags = [...new Set(items.flatMap(i => i.tags || []))].sort();
+  if (activeTag && !allTags.includes(activeTag)) activeTag = '';
+  const row = $('tagsRow');
+  row.replaceChildren();
+  if (allTags.length){
+    row.append(el('button', {
+      class: 'chip' + (activeTag ? '' : ' on'), type: 'button', text: 'all',
+      onclick: () => { activeTag = ''; render(); }
+    }));
+    allTags.forEach(t => row.append(el('button', {
+      class: 'chip' + (activeTag === t ? ' on' : ''), type: 'button', text: t,
+      onclick: () => { activeTag = t; render(); }
+    })));
+  }
+
+  const shown = activeTag ? items.filter(i => (i.tags || []).includes(activeTag)) : items;
+  const grid = $('grid');
+  grid.replaceChildren();
+  shown.forEach(item => grid.append(card(item)));
+  setStatus(shown.length ? shown.length + (shown.length === 1 ? ' item' : ' items') : 'nothing here');
+}
+
+function card(item){
+  const open = () => view(item);
+
+  const thumb = el('div', { class: 'thumb', onclick: open, title: 'open' },
+    item.thumbnailUrl
+      ? el('img', { src: item.thumbnailUrl, alt: '', loading: 'lazy' })
+      : el('div', { class: 'ext', text: extOf(item) })
+  );
+
+  const tagsBox = el('div', { class: 'tags' },
+    ...(item.tags || []).map(t => el('span', { class: 'tag', text: t }))
+  );
+
+  const actions = el('div', { class: 'actions' },
+    el('button', { class: 'act', type: 'button', text: 'open', onclick: open }),
+    status === 'pending'
+      ? el('button', { class: 'act keep', type: 'button', text: 'keep', onclick: () => keep(item) })
+      : null,
+    el('button', { class: 'act', type: 'button', text: 'tags', onclick: () => editTags(item, tagsBox) }),
+    deleteButton(item)
+  );
+
+  return el('div', { class: 'card' },
+    thumb,
+    el('div', { class: 'info' },
+      el('div', { class: 'name', text: displayName(item) }),
+      el('div', { class: 'meta', text: humanSize(item.size || 0) + ' · ' + new Date(item.uploadTimestamp).toLocaleString() }),
+      item.note ? el('div', { class: 'note', text: item.note }) : null,
+      tagsBox,
+      actions
+    )
+  );
+}
+
+/* ---------- actions ---------- */
+
+async function view(item){
+  // open the tab first so the popup blocker sees a direct click, then point it at the link
+  const w = window.open('', '_blank');
+  try {
+    const res = await api('/inbox/items/' + item.itemId + '/url');
+    if (!res.ok) throw new Error('no url');
+    const { url } = await res.json();
+    if (w){ w.opener = null; w.location.href = url; } else { location.href = url; }
+  } catch(e){
+    if (w) w.close();
+    setStatus('could not open that file', true);
+  }
+}
+
+async function keep(item){
+  try {
+    const res = await api('/inbox/items/' + item.itemId + '/keep', { method: 'POST' });
+    if (!res.ok) throw new Error('keep failed');
+    items = items.filter(i => i.itemId !== item.itemId);
+    render();
+  } catch(e){
+    setStatus('could not keep that item', true);
+  }
+}
+
+function deleteButton(item){
+  let timer = null;
+  const btn = el('button', { class: 'act del', type: 'button', text: 'delete' });
+  btn.addEventListener('click', async () => {
+    if (!btn.classList.contains('arm')){
+      btn.classList.add('arm');
+      btn.textContent = 'sure? permanent';
+      timer = setTimeout(() => { btn.classList.remove('arm'); btn.textContent = 'delete'; }, 3500);
+      return;
+    }
+    clearTimeout(timer);
+    try {
+      const res = await api('/inbox/items/' + item.itemId, { method: 'DELETE' });
+      if (!res.ok) throw new Error('delete failed');
+      items = items.filter(i => i.itemId !== item.itemId);
+      render();
+    } catch(e){
+      btn.classList.remove('arm');
+      btn.textContent = 'delete';
+      setStatus('could not delete that item', true);
+    }
+  });
+  return btn;
+}
+
+function editTags(item, tagsBox){
+  const input = el('input', {
+    type: 'text', class: 'tag-edit', placeholder: 'tax, kids photos, iot projects',
+    value: (item.tags || []).join(', ')
+  });
+  tagsBox.replaceChildren(input);
+  input.focus();
+
+  let done = false;
+  const finish = async save => {
+    if (done) return;
+    done = true;
+    if (!save){ render(); return; }
+    const tags = input.value.split(',').map(t => t.trim()).filter(Boolean);
+    try {
+      const res = await api('/inbox/items/' + item.itemId + '/tags', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tags })
+      });
+      if (!res.ok) throw new Error('tags failed');
+      item.tags = (await res.json()).tags;
+    } catch(e){
+      setStatus('could not save tags', true);
+    }
+    render();
+  };
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter'){ e.preventDefault(); finish(true); }
+    if (e.key === 'Escape'){ finish(false); }
+  });
+  input.addEventListener('blur', () => finish(true));
+}
+
+/* ---------- wiring ---------- */
+
+function showApp(){
+  $('login').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  $('signout').classList.remove('hidden');
+  load();
+}
+
+function setTab(next){
+  status = next;
+  activeTag = '';
+  $('tabPending').classList.toggle('on', next === 'pending');
+  $('tabKept').classList.toggle('on', next === 'kept');
+  load();
+}
+
+$('login').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('loginBtn').disabled = true;
+  setLoginMsg('');
+  try {
+    await login($('email').value.trim(), $('password').value);
+    $('password').value = '';
+    showApp();
+  } catch(err){
+    setLoginMsg(err.code === 'NotAuthorizedException' ? 'wrong email or password' : 'could not log in', true);
+  } finally {
+    $('loginBtn').disabled = false;
+  }
+});
+
+$('signout').addEventListener('click', () => signOut(''));
+$('tabPending').addEventListener('click', () => setTab('pending'));
+$('tabKept').addEventListener('click', () => setTab('kept'));
+$('reload').addEventListener('click', load);
+
+// thumbnail links expire after 5 minutes, so reload them if the tab has been idle
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && !$('app').classList.contains('hidden')
+      && Date.now() - loadedAt > 4 * 60 * 1000) load();
+});
+
+if (store.get('idToken')) showApp();
+</script>
+</body>
+</html>

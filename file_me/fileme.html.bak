@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Send Steve a file</title>
+<style>
+  :root{
+    --bg:#12151a;
+    --panel:#1a1f27;
+    --panel-edge:#252c37;
+    --text:#e7e9ec;
+    --text-dim:#8b93a1;
+    --amber:#FE5800;
+    --amber-dim:#a13d00;
+    --green:#4fb87a;
+    --red:#e2685f;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 20% -10%, #1e2530 0%, transparent 45%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .card{ width:100%; max-width:440px; }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin:0 0 8px;
+  }
+  h1{
+    font-family:var(--mono);
+    font-size:26px;
+    font-weight:600;
+    margin:0 0 6px;
+    line-height:1.25;
+  }
+  .sub{
+    color:var(--text-dim);
+    font-size:14px;
+    margin:0 0 28px;
+    line-height:1.5;
+  }
+  .dropzone{
+    position:relative;
+    border:1.5px dashed var(--panel-edge);
+    background:var(--panel);
+    border-radius:14px;
+    padding:36px 20px;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .dropzone.hover{
+    border-color:var(--amber);
+    background:#20191045;
+  }
+  .dropzone.hover .slot-glow{ opacity:1; }
+  .slot{
+    width:64px;
+    height:14px;
+    margin:0 auto 18px;
+    border-radius:7px;
+    background:linear-gradient(180deg, #0c0e12, #000);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,.6), 0 0 0 1px var(--panel-edge);
+    position:relative;
+    overflow:hidden;
+  }
+  .slot-glow{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg, transparent, var(--amber), transparent);
+    opacity:0;
+    transition:opacity .2s ease;
+  }
+  .dz-title{
+    font-family:var(--mono);
+    font-size:15px;
+    color:var(--text);
+    margin:0 0 4px;
+  }
+  .dz-sub{ font-size:12.5px; color:var(--text-dim); }
+  input[type=file]{ display:none; }
+  .filelist{ margin-top:16px; }
+  .fileitem{
+    background:var(--panel);
+    border:1px solid var(--panel-edge);
+    border-radius:10px;
+    padding:12px 14px;
+    margin-top:10px;
+    font-size:13.5px;
+  }
+  .fileitem .name{
+    font-family:var(--mono);
+    color:var(--text);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    display:block;
+    margin-bottom:8px;
+  }
+  .bar-track{ height:6px; border-radius:4px; background:#0e1116; overflow:hidden; }
+  .bar-fill{ height:100%; width:0%; background:var(--amber); transition:width .12s linear; }
+  .status-row{
+    display:flex;
+    justify-content:space-between;
+    margin-top:6px;
+    font-size:11.5px;
+    color:var(--text-dim);
+    font-family:var(--mono);
+  }
+  .status-row.ok .status-text{ color:var(--green); }
+  .status-row.err .status-text{ color:var(--red); }
+  footer{
+    margin-top:28px;
+    text-align:center;
+    font-size:11.5px;
+    color:var(--text-dim);
+    font-family:var(--mono);
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <p class="eyebrow">stevekc.com / file_me</p>
+    <h1>Send Steve a file</h1>
+
+    <div class="dropzone" id="dropzone">
+      <div class="slot"><div class="slot-glow"></div></div>
+      <p class="dz-title" id="dzTitle">Tap to choose a file, or drop it here</p>
+      <p class="dz-sub">Up to 500 MB · any file type</p>
+      <input type="file" id="fileInput" multiple>
+    </div>
+
+    <div class="filelist" id="fileList"></div>
+
+  </div>
+
+<script>
+const API_BASE = "https://sf06p1myta.execute-api.ap-southeast-2.amazonaws.com";
+const MAX_BYTES = 524288000; // 500 MB, matches server-side cap in the Lambda
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const fileList = document.getElementById('fileList');
+
+dropzone.addEventListener('click', () => fileInput.click());
+
+['dragenter','dragover'].forEach(evt =>
+  dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.add('hover'); })
+);
+['dragleave','drop'].forEach(evt =>
+  dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove('hover'); })
+);
+dropzone.addEventListener('drop', e => { handleFiles(e.dataTransfer.files); });
+fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+function humanSize(bytes){
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(0) + ' KB';
+  return (bytes/(1024*1024)).toFixed(1) + ' MB';
+}
+
+function handleFiles(files){
+  [...files].forEach(uploadFile);
+}
+
+async function uploadFile(file){
+  const item = document.createElement('div');
+  item.className = 'fileitem';
+  item.innerHTML = `
+    <span class="name">${file.name}</span>
+    <div class="bar-track"><div class="bar-fill"></div></div>
+    <div class="status-row">
+      <span class="status-text">Preparing…</span>
+      <span class="status-size">${humanSize(file.size)}</span>
+    </div>
+  `;
+  fileList.prepend(item);
+  const bar = item.querySelector('.bar-fill');
+  const statusRow = item.querySelector('.status-row');
+  const statusText = item.querySelector('.status-text');
+
+  // Client-side check is just UX — the real enforcement is server-side
+  // via content-length-range in the presigned POST policy.
+  if (file.size > MAX_BYTES){
+    statusRow.classList.add('err');
+    statusText.textContent = 'Too large — 500 MB limit';
+    return;
+  }
+
+  try{
+    // Step 1: ask our Lambda for a presigned POST (this is the GET /upload-url call)
+    const res = await fetch(`${API_BASE}/upload-url?filename=${encodeURIComponent(file.name)}`);
+    if (!res.ok) throw new Error('Could not prepare upload');
+    const { url, fields } = await res.json();
+
+    // Step 2: build the multipart form S3 expects. The signed "fields" MUST
+    // come before the file itself — S3 reads the form fields in order and
+    // needs the policy/signature before it hits the file bytes.
+    const formData = new FormData();
+    Object.entries(fields).forEach(([k,v]) => formData.append(k, v));
+    formData.append('file', file);
+
+    statusText.textContent = 'Uploading…';
+
+    // Step 3: XHR (not fetch) because fetch has no upload progress event —
+    // xhr.upload.onprogress is what drives the live percentage.
+    await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', url);
+      xhr.upload.onprogress = e => {
+        if (e.lengthComputable){
+          const pct = Math.round((e.loaded/e.total)*100);
+          bar.style.width = pct + '%';
+          statusText.textContent = pct < 100 ? `Uploading… ${pct}%` : 'Finishing…';
+        }
+      };
+      xhr.onload = () => (xhr.status === 204 || xhr.status === 201 || xhr.status === 200) ? resolve() : reject(new Error('Upload failed'));
+      xhr.onerror = () => reject(new Error('Network error'));
+      xhr.send(formData);
+    });
+
+    bar.style.width = '100%';
+    statusRow.classList.add('ok');
+    statusText.textContent = 'Sent ✓';
+  } catch (err){
+    statusRow.classList.add('err');
+    statusText.textContent = 'Failed — try again';
+  }
+}
+</script>
+</body>
+</html>
