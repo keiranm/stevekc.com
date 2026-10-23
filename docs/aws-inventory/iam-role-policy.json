@@ -1,0 +1,25 @@
+{
+    "RoleName": "stevekc-upload-lambda-role",
+    "PolicyName": "stevekc-upload-lambda-policy",
+    "PolicyDocument": {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "s3:PutObject",
+                    "s3:GetObject"
+                ],
+                "Resource": "arn:aws:s3:::stevekc-uploads/*"
+            },
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "ses:SendEmail",
+                    "ses:SendRawEmail"
+                ],
+                "Resource": "*"
+            }
+        ]
+    }
+}

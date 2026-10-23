@@ -1,0 +1,8 @@
+{
+    "Name": "stevekc-upload-pending-rule",
+    "Arn": "arn:aws:events:ap-southeast-2:258393933362:rule/stevekc-upload-pending-rule",
+    "EventPattern": "{\n  \"source\": [\"aws.s3\"],\n  \"detail-type\": [\"Object Created\"],\n  \"detail\": {\n    \"bucket\": {\"name\": [\"stevekc-uploads\"]},\n    \"object\": {\"key\": [{\"prefix\": \"uploads/pending/\"}]}\n  }\n}\n",
+    "State": "ENABLED",
+    "EventBusName": "default",
+    "CreatedBy": "258393933362"
+}

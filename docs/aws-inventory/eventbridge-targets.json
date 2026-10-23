@@ -1,0 +1,12 @@
+{
+    "Targets": [
+        {
+            "Id": "notify",
+            "Arn": "arn:aws:lambda:ap-southeast-2:258393933362:function:stevekc-notify-upload"
+        },
+        {
+            "Id": "thumbnail",
+            "Arn": "arn:aws:lambda:ap-southeast-2:258393933362:function:stevekc-generate-thumbnail"
+        }
+    ]
+}

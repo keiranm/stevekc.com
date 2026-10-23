@@ -1,0 +1,18 @@
+{
+    "Groups": [
+        {
+            "GroupName": "file-admin",
+            "UserPoolId": "ap-southeast-2_a5VRRGNrH",
+            "Description": "Full access to the file inbox",
+            "LastModifiedDate": "2026-08-25T17:01:19.450000+10:00",
+            "CreationDate": "2026-08-25T17:01:19.450000+10:00"
+        },
+        {
+            "GroupName": "family",
+            "UserPoolId": "ap-southeast-2_a5VRRGNrH",
+            "Description": "Garage door access only",
+            "LastModifiedDate": "2026-08-25T17:01:20.140000+10:00",
+            "CreationDate": "2026-08-25T17:01:20.140000+10:00"
+        }
+    ]
+}

@@ -1,0 +1,8 @@
+{
+    "PolicyNames": [
+        "stevekc-dynamo-query-update-policy",
+        "stevekc-dynamo-write-policy",
+        "stevekc-inbox-policy",
+        "stevekc-upload-lambda-policy"
+    ]
+}

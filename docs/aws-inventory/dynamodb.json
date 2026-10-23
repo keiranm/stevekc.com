@@ -1,0 +1,52 @@
+{
+    "keys": [
+        {
+            "AttributeName": "itemId",
+            "KeyType": "HASH"
+        }
+    ],
+    "attrs": [
+        {
+            "AttributeName": "itemId",
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "s3Key",
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "status",
+            "AttributeType": "S"
+        }
+    ],
+    "gsi": [
+        {
+            "n": "status-index",
+            "k": [
+                {
+                    "AttributeName": "status",
+                    "KeyType": "HASH"
+                }
+            ],
+            "p": {
+                "ProjectionType": "ALL"
+            }
+        },
+        {
+            "n": "s3Key-index",
+            "k": [
+                {
+                    "AttributeName": "s3Key",
+                    "KeyType": "HASH"
+                }
+            ],
+            "p": {
+                "ProjectionType": "ALL"
+            }
+        }
+    ],
+    "billing": {
+        "BillingMode": "PAY_PER_REQUEST",
+        "LastUpdateToPayPerRequestDateTime": "2026-08-19T18:43:07.636000+10:00"
+    }
+}

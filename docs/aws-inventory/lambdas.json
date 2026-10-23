@@ -1,0 +1,100 @@
+[
+    {
+        "name": "garage_door_history",
+        "runtime": "python3.14",
+        "mem": 128,
+        "timeout": 3,
+        "layers": null,
+        "last": "2026-04-15T13:09:15.000+0000"
+    },
+    {
+        "name": "website_sendSMStoSKC",
+        "runtime": "python3.12",
+        "mem": 128,
+        "timeout": 3,
+        "layers": null,
+        "last": "2024-07-07T06:56:40.136+0000"
+    },
+    {
+        "name": "stevekc-generate-thumbnail",
+        "runtime": "python3.13",
+        "mem": 512,
+        "timeout": 30,
+        "layers": [
+            "arn:aws:lambda:ap-southeast-2:258393933362:layer:pillow:1"
+        ],
+        "last": "2026-08-24T07:06:31.000+0000"
+    },
+    {
+        "name": "stevekc-generate-upload-url",
+        "runtime": "python3.13",
+        "mem": 128,
+        "timeout": 10,
+        "layers": null,
+        "last": "2026-08-19T10:28:49.000+0000"
+    },
+    {
+        "name": "stevekc-notify-upload",
+        "runtime": "python3.13",
+        "mem": 128,
+        "timeout": 10,
+        "layers": null,
+        "last": "2026-08-24T07:06:30.000+0000"
+    },
+    {
+        "name": "stevekc-inbox-api",
+        "runtime": "python3.13",
+        "mem": 128,
+        "timeout": 15,
+        "layers": null,
+        "last": "2026-10-13T09:04:17.000+0000"
+    },
+    {
+        "name": "stevekc_net",
+        "runtime": "python3.6",
+        "mem": 128,
+        "timeout": 3,
+        "layers": null,
+        "last": "2018-08-31T13:52:48.767+0000"
+    },
+    {
+        "name": "holURLChecker",
+        "runtime": "nodejs20.x",
+        "mem": 128,
+        "timeout": 3,
+        "layers": null,
+        "last": "2024-07-05T01:21:03.000+0000"
+    },
+    {
+        "name": "sendEmailToSKC",
+        "runtime": "python3.12",
+        "mem": 128,
+        "timeout": 3,
+        "layers": null,
+        "last": "2024-07-17T06:38:10.000+0000"
+    },
+    {
+        "name": "garage_door_status",
+        "runtime": "python3.14",
+        "mem": 128,
+        "timeout": 3,
+        "layers": null,
+        "last": "2026-04-15T07:38:16.000+0000"
+    },
+    {
+        "name": "garage_door_trigger",
+        "runtime": "python3.14",
+        "mem": 128,
+        "timeout": 3,
+        "layers": null,
+        "last": "2026-04-15T12:42:23.000+0000"
+    },
+    {
+        "name": "stevekc-send-message",
+        "runtime": "python3.13",
+        "mem": 128,
+        "timeout": 10,
+        "layers": null,
+        "last": "2026-08-06T12:34:19.128+0000"
+    }
+]

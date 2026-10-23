@@ -43,7 +43,7 @@ The thumbnail Lambda needs the Pillow layer and 512 MB. Before testing a deploy,
 - Only `file-admin` sees uploads. `family` is for garage access, in the garage project.
 - No video thumbnails: videos get a generic icon and the browser plays them; use `aws s3 cp` if playback fails.
 - Pending items and their thumbnails expire after 90 days; kept items never expire.
-- Logins use `+home` aliases (stephen.k.clark+home@gmail.com), easy to filter and apart from the root account email.
+- Logins use `+home` aliases (s*****+home@gmail.com), easy to filter and apart from the root account email.
 
 ## Operating
 

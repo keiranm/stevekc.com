@@ -1,0 +1,13 @@
+{
+    "aliases": {
+        "Quantity": 1,
+        "Items": [
+            "stevekc.com"
+        ]
+    },
+    "origins": [
+        "stevekc.com.s3-website-ap-southeast-2.amazonaws.com"
+    ],
+    "root": "index.html",
+    "cert": "arn:aws:acm:us-east-1:258393933362:certificate/e2534216-92f1-4d1a-92a6-6c515dc62fb3"
+}

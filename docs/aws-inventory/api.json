@@ -1,0 +1,27 @@
+{
+    "ApiEndpoint": "https://sf06p1myta.execute-api.ap-southeast-2.amazonaws.com",
+    "ApiId": "sf06p1myta",
+    "ApiKeySelectionExpression": "$request.header.x-api-key",
+    "CorsConfiguration": {
+        "AllowHeaders": [
+            "content-type",
+            "authorization"
+        ],
+        "AllowMethods": [
+            "GET",
+            "POST",
+            "DELETE",
+            "OPTIONS"
+        ],
+        "AllowOrigins": [
+            "https://stevekc.com"
+        ]
+    },
+    "CreatedDate": "2026-08-06T23:19:05+00:00",
+    "DisableExecuteApiEndpoint": false,
+    "IpAddressType": "ipv4",
+    "Name": "stevekc-contact-api",
+    "ProtocolType": "HTTP",
+    "RouteSelectionExpression": "$request.method $request.path",
+    "Tags": {}
+}

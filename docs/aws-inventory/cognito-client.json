@@ -1,0 +1,9 @@
+{
+    "flows": [
+        "ALLOW_REFRESH_TOKEN_AUTH",
+        "ALLOW_USER_PASSWORD_AUTH"
+    ],
+    "idMin": null,
+    "refreshDays": 30,
+    "secret": null
+}

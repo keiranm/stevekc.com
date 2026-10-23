@@ -1,0 +1,25 @@
+{
+    "TransitionDefaultMinimumObjectSize": "all_storage_classes_128K",
+    "Rules": [
+        {
+            "Expiration": {
+                "Days": 90
+            },
+            "ID": "expire-pending",
+            "Filter": {
+                "Prefix": "uploads/pending/"
+            },
+            "Status": "Enabled"
+        },
+        {
+            "Expiration": {
+                "Days": 90
+            },
+            "ID": "expire-pending-thumbnails",
+            "Filter": {
+                "Prefix": "thumbnails/"
+            },
+            "Status": "Enabled"
+        }
+    ]
+}

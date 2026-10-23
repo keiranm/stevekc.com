@@ -1,0 +1,1 @@
+{"Version":"2012-10-17","Id":"default","Statement":[{"Sid":"apigw-invoke","Effect":"Allow","Principal":{"Service":"apigateway.amazonaws.com"},"Action":"lambda:InvokeFunction","Resource":"arn:aws:lambda:ap-southeast-2:258393933362:function:stevekc-send-message","Condition":{"ArnLike":{"AWS:SourceArn":"arn:aws:execute-api:ap-southeast-2:258393933362:sf06p1myta/*/*/message"}}}]}

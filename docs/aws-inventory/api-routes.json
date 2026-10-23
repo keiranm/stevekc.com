@@ -1,0 +1,58 @@
+{
+    "Items": [
+        {
+            "ApiKeyRequired": false,
+            "AuthorizationType": "JWT",
+            "AuthorizerId": "e74i92",
+            "RouteId": "5l6ahr2",
+            "RouteKey": "POST /inbox/items/{itemId}/tags",
+            "Target": "integrations/8kxvof2"
+        },
+        {
+            "ApiKeyRequired": false,
+            "AuthorizationType": "JWT",
+            "AuthorizerId": "e74i92",
+            "RouteId": "8r2dqep",
+            "RouteKey": "GET /inbox/items/{itemId}/url",
+            "Target": "integrations/8kxvof2"
+        },
+        {
+            "ApiKeyRequired": false,
+            "AuthorizationType": "JWT",
+            "AuthorizerId": "e74i92",
+            "RouteId": "gswo9vd",
+            "RouteKey": "DELETE /inbox/items/{itemId}",
+            "Target": "integrations/8kxvof2"
+        },
+        {
+            "ApiKeyRequired": false,
+            "AuthorizationType": "JWT",
+            "AuthorizerId": "e74i92",
+            "RouteId": "jofuhs5",
+            "RouteKey": "GET /inbox/items",
+            "Target": "integrations/8kxvof2"
+        },
+        {
+            "ApiKeyRequired": false,
+            "AuthorizationType": "NONE",
+            "RouteId": "ox70cwe",
+            "RouteKey": "GET /upload-url",
+            "Target": "integrations/wo9a10s"
+        },
+        {
+            "ApiKeyRequired": false,
+            "AuthorizationType": "NONE",
+            "RouteId": "ur7mpy5",
+            "RouteKey": "POST /message",
+            "Target": "integrations/tzzny8g"
+        },
+        {
+            "ApiKeyRequired": false,
+            "AuthorizationType": "JWT",
+            "AuthorizerId": "e74i92",
+            "RouteId": "wfoje05",
+            "RouteKey": "POST /inbox/items/{itemId}/keep",
+            "Target": "integrations/8kxvof2"
+        }
+    ]
+}

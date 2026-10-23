@@ -1,0 +1,32 @@
+[
+    {
+        "n": "/aws/lambda/stevekc-generate-thumbnail",
+        "retention": null,
+        "bytes": 6270
+    },
+    {
+        "n": "/aws/lambda/stevekc-generate-upload-url",
+        "retention": null,
+        "bytes": 13735
+    },
+    {
+        "n": "/aws/lambda/stevekc-inbox-api",
+        "retention": null,
+        "bytes": 18064
+    },
+    {
+        "n": "/aws/lambda/stevekc-notify-upload",
+        "retention": null,
+        "bytes": 12648
+    },
+    {
+        "n": "/aws/lambda/stevekc-send-message",
+        "retention": null,
+        "bytes": 3669
+    },
+    {
+        "n": "/aws/lambda/stevekc_net",
+        "retention": null,
+        "bytes": 80231
+    }
+]

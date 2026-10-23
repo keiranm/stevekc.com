@@ -1,0 +1,31 @@
+{
+    "policies": {
+        "PasswordPolicy": {
+            "MinimumLength": 10,
+            "RequireUppercase": true,
+            "RequireLowercase": true,
+            "RequireNumbers": true,
+            "RequireSymbols": false,
+            "TemporaryPasswordValidityDays": 7
+        },
+        "SignInPolicy": {
+            "AllowedFirstAuthFactors": [
+                "PASSWORD"
+            ]
+        }
+    },
+    "schema": [
+        {
+            "Name": "sub",
+            "AttributeDataType": "String",
+            "DeveloperOnlyAttribute": false,
+            "Mutable": false,
+            "Required": true,
+            "StringAttributeConstraints": {
+                "MinLength": "1",
+                "MaxLength": "2048"
+            }
+        }
+    ],
+    "mfa": "OFF"
+}
