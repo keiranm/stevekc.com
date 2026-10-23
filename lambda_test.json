@@ -1,7 +1,0 @@
-{
-    "from_address": "sender@verifiedidentity.com",
-    "from_name": "Sender Name",
-    "to_address": "receiver@verifiedidentity.com",
-    "email_subject": "Test API Gateway",
-    "email_message": "test message from the API gateway"
-  }

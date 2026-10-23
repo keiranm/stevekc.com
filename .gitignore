@@ -34,3 +34,9 @@ venv/
 build/
 dist/
 coverage/
+
+# AWS CLI output and local build artefacts
+out.json
+*-out.json
+*.zip
+layer/python/
