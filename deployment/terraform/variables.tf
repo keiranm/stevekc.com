@@ -8,6 +8,11 @@ variable "domain" {
   default = "stevekc.com"
 }
 
+variable "website" {
+  type    = string
+  default = "www.stevekc.com"
+}
+
 variable "bucket_name" {
   type    = string
   default = "stevekc-uploads"
